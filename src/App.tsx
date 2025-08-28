@@ -5,23 +5,23 @@ import Content from './content/index.mdx';
 import { MDXProvider } from '@mdx-js/react';
 
 function App() {
-  const pageCount = useRef(signal(1)).current;
+  const pageCount = useRef(signal(100)).current;
 
-  useEffect(() => {
-    const regionoversetchange = (event: any) => {
-      let overflow = event.target.firstEmptyRegionIndex === -1;
-      console.log('overflow', overflow, event.target.firstEmptyRegionIndex, pageCount.value);
-      if (overflow) {
-        pageCount.value++;
-      } else if (event.target.firstEmptyRegionIndex > 0) {
-        pageCount.value = event.target.firstEmptyRegionIndex;
-      }
-    }
-    document.getNamedFlow('page-flow').addEventListener('regionoversetchange', regionoversetchange);
-    return () => {
-      document.getNamedFlow('page-flow').removeEventListener('regionoversetchange', regionoversetchange);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const regionoversetchange = (event: any) => {
+  //     let overflow = event.target.firstEmptyRegionIndex === -1;
+  //     console.log('overflow', overflow, event.target.firstEmptyRegionIndex, pageCount.value);
+  //     if (overflow) {
+  //       pageCount.value++;
+  //     } else if (event.target.firstEmptyRegionIndex > 0) {
+  //       pageCount.value = event.target.firstEmptyRegionIndex;
+  //     }
+  //   }
+  //   document.getNamedFlow('page-flow').addEventListener('regionoversetchange', regionoversetchange);
+  //   return () => {
+  //     document.getNamedFlow('page-flow').removeEventListener('regionoversetchange', regionoversetchange);
+  //   }
+  // }, []);
 
 
 
