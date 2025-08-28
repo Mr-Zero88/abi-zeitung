@@ -121,8 +121,22 @@
   margin-left: 0.5em;
 }
 
-
-
 cssregion {
   width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+.quote-table>table>tbody>tr>td:first-child {
+  font-weight: bold;
+  text-align: left;
+  vertical-align: top;
 }
