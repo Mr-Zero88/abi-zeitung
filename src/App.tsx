@@ -1,35 +1,84 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useRef } from 'react';
+import { signal, useComputed } from '@preact/signals-react';
 import './App.css'
+import Content from './content/index.mdx';
+import { MDXProvider } from '@mdx-js/react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const pageCount = useRef(signal(1)).current;
+
+  useEffect(() => {
+    const regionoversetchange = (event: any) => {
+      let overflow = event.target.firstEmptyRegionIndex === -1;
+      console.log('overflow', overflow, event.target.firstEmptyRegionIndex, pageCount.value);
+      if (overflow) {
+        pageCount.value++;
+      } else if (event.target.firstEmptyRegionIndex > 0) {
+        pageCount.value = event.target.firstEmptyRegionIndex;
+      }
+    }
+    document.getNamedFlow('page-flow').addEventListener('regionoversetchange', regionoversetchange);
+    return () => {
+      document.getNamedFlow('page-flow').removeEventListener('regionoversetchange', regionoversetchange);
+    }
+  }, []);
+
+
+
+  let pages = useRef(useComputed(() => {
+    return Array.from({ length: pageCount.value }).map((_, i) => (
+      <div key={i} className='page'>
+        <div className='page-header-container'>
+          <div className='page-header' />
+        </div>
+        <div className='page-content-container'>
+          <div className='page-content' />
+        </div>
+        <div className='page-footer-container'>
+          <div className='page-footer'>
+            <div className='page-number'>{i + 1}</div>
+          </div>
+        </div>
+      </div>
+    ));
+  })).current;
+
+  // pages.subscribe(() => {
+  //   // Trigger relayout when pages change
+  //   document.getNamedFlow('page-flow').relayout();
+  //   console.log(pages.value.length, 'pages');
+  // });
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className='app'>
+        <div className='page-area a4'>
+          {pages}
+        </div>
+        <div className='content'>
+          <MDXProvider components={{ NewPage, TableOfContent }}>
+            <Content />
+          </MDXProvider>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
 
-export default App
+const NewPage: React.FC = () => {
+  return <div className='newpage' />;
+}
+
+const TableOfContent: React.FC = () => {
+  return (
+    <div className='table-of-contents'>
+      <ol>
+        <li><div><span className='title'>Einleitung</span> <span className='spacer'></span> <span className='page-number'>1</span></div></li>
+        <li><div><span className='title'>Danksagung</span> <span className='spacer'></span> <span className='page-number'>2</span></div></li>
+        <li><div><span className='title'>Lorem Ipsum</span> <span className='spacer'></span> <span className='page-number'>3</span></div></li>
+      </ol>
+    </div>
+  );
+};
+
+export default App;
