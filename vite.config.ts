@@ -9,4 +9,10 @@ export default defineConfig({
     {enforce: 'pre', ...mdx({providerImportSource: "@mdx-js/react", remarkPlugins: [remarkGfm]})},
     react({include: /\.(jsx|js|mdx|md|tsx|ts)$/})
   ],
+  server: {
+    allowedHosts: [
+      'zeitung.blueice-gaming.de'
+    ],
+    host: true
+  }
 })
